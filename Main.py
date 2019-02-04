@@ -3,7 +3,9 @@
 '''
 import os, sys, atexit, datetime, csv, re, time, msvcrt, select, configparser
 import sqlite3
-import Menu, stop_work, start_work, edit_work
+import Menu, stop_work, start_work, edit_work, stati
+from time import strptime, strftime
+from datetime import date, datetime, timedelta
 
 # Az SQLITE3 database elérési útvonala
 db_file = r'C:\G\PYTHON\WT\WT.db'
@@ -54,9 +56,73 @@ tables = (	'''CREATE TABLE IF NOT EXISTS WorkTime (
 	   LEFT JOIN
 	   WorkDescription ON WorkTime.ID_WorkDescription = WorkDescription.ID;''')
 
-def main():
-	# TODO: Config fájl beolvasása
+cfg = ('''[User data]
+UID = 
+user name = 
+password = 
+db_file = WT.db
 
+[Special days]
+# formátum: yyyy.mm.dd.
+
+Feast days =
+	2019.01.01.
+	2019.03.15.
+	2019.04.19.
+	2019.04.22.
+	2019.05.01.
+	2019.06.10.
+	2019.08.19.
+	2019.08.20.
+	2019.10.23.
+	2019.11.01.
+	2019.12.25.
+	2019.12.26.
+
+Extra workdays =
+	2019.08.10.
+	2019.12.07.
+	2019.12.14.
+
+Paid holiday =
+	2019.01.02.
+
+''')
+
+def main():
+	# Config fájl beolvasása
+	try:
+		config = configparser.ConfigParser()
+		config.read('WT_config.ini')
+
+		tmp = config['Special days']['Feast days'].split('\n')
+		tmp = list(filter(None, tmp))
+		specdays_fd = []
+		for item in tmp:
+			item.replace(' ', '')
+			specdays_fd.append(datetime.date(datetime.strptime(item, "%Y.%m.%d.")))
+		
+		tmp = config['Special days']['Extra workdays'].split('\n')
+		tmp = list(filter(None, tmp))
+		specdays_ew = []
+		for item in tmp:
+			item.replace(' ', '')
+			specdays_ew.append(datetime.date(datetime.strptime(item, "%Y.%m.%d.")))
+
+		tmp = config['Special days']['Paid holiday'].split('\n')
+		tmp = list(filter(None, tmp))
+		specdays_ph = []
+		for item in tmp:
+			item.replace(' ', '')
+			specdays_ph.append(datetime.date(datetime.strptime(item, "%Y.%m.%d.")))
+
+	except Exception as e:
+		print(e)
+		print('Hiba a WT_config.ini beolvasása közben!')
+		print('A program működése leáll, a folytatáshoz nyomjon meg egy gombot...')
+		msvcrt.getch()
+		return
+	
 	# Adatbázishoz csatlakozás, inicializálás
 	try:
 		conn = sqlite3.connect(db_file)
