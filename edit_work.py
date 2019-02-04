@@ -1,4 +1,4 @@
-import os, sys, atexit, datetime, csv, re, time, msvcrt, select, configparser
+import os, sys, atexit, datetime, csv, re, time, msvcrt, select, configparser, calendar
 import sqlite3
 import Menu, stop_work, start_work
 from time import strptime, strftime
@@ -56,9 +56,10 @@ def list_works(db_file, time_recalc=0, beg=None, end=None):
 			print('Adja meg a listázandó évet és hónapot (formátum: yyyy-mm):')
 			tmp = input()
 			try:
-				date = tmp.split('-')
-				beg = date[0] + '-' + date[1] + '-01 00:00:00'
-				end = date[0] + '-' + str(int(date[1])+1) + '-01 00:00:00'    
+                		date = tmp.split('-')
+                		r = calendar.monthrange(int(date[0]), int(date[1]))
+                		beg = date[0] + '-' + date[1] + '-01 00:00:00'
+                		end = date[0] + '-' + date[1] + '-' + str(r[1]) + ' 23:59:59'    
 				break
 			except Exception as e:
 				print(e)
