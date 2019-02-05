@@ -163,7 +163,8 @@ def main():
 			elif(main_menu.cursor == 4):
 				# Statisztika: ...
 				w_list = edit_work.list_works(db_file, time_recalc=1)
-				edit_work.work_stat(w_list)
+				stati.stati(w_list, specdays_fd, specdays_ew, specdays_ph)
+				#edit_work.work_stat(w_list)
 				pass
 			elif(main_menu.cursor == 5):
 				# Adatbázis exportálása txt-be: ...
