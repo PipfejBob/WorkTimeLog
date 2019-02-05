@@ -1,4 +1,4 @@
-import Menu, edit_work, up
+import Menu, edit_work
 
 from uptime import boottime
 from time import strptime, strftime
@@ -206,7 +206,7 @@ def get_work(ActWork):
 	ActWork.Work_Desc = work_menu.col_list[work_menu.cursor][0]
 	return 0
 
-def time_calc(ActWork):
+def time_calc(ActWork, time_opt=True):
 	
 	# az utolsó Time_Start lekérdezése
 	#db_str = ActWork.db_conn.execute("SELECT StartTime FROM WorkTime WHERE ID = (?)", [ActWork.LastRowID]).fetchone()[0]
@@ -218,15 +218,18 @@ def time_calc(ActWork):
 
 	# ebédidő kiszámítása, formátum: HH:MM:SS
 	# munkaidő optimalizáció
-	wt = ActWork.Time_Stop - ActWork.Time_Start
-	if(wt <= timedelta(hours=3, minutes=0)):
-		ActWork.Time_Minus = timedelta(minutes=0)
-	elif(wt > timedelta(hours=3, minutes=0) and wt <= timedelta(hours=8, minutes=35)):
-		ActWork.Time_Minus = timedelta(minutes=35)
-	elif(wt > timedelta(hours=8, minutes=35) and wt <= timedelta(hours=9, minutes=0)): 
-		ActWork.Time_Minus = wt - timedelta(hours=8)
+	if time_opt == True or ActWork.Time_Minus == None:
+		wt = ActWork.Time_Stop - ActWork.Time_Start
+		if(wt <= timedelta(hours=3, minutes=0)):
+			ActWork.Time_Minus = timedelta(minutes=0)
+		elif(wt > timedelta(hours=3, minutes=0) and wt <= timedelta(hours=8, minutes=35)):
+			ActWork.Time_Minus = timedelta(minutes=35)
+		elif(wt > timedelta(hours=8, minutes=35) and wt <= timedelta(hours=9, minutes=0)): 
+			ActWork.Time_Minus = wt - timedelta(hours=8)
+		else:
+			ActWork.Time_Minus = timedelta(hours=1)
 	else:
-		ActWork.Time_Minus = timedelta(hours=1)
+		pass
 	
 	# munkaidő kiszámítása
 	ActWork.Time_WorkStop = ActWork.Time_Stop - ActWork.Time_Minus
@@ -368,49 +371,8 @@ def stop_work(db_file):
 	comit_to_db(ActWork)
 	ActWork.db_conn.close()
 	# itt lehet feltölteni a munkanaplóba
-	up.up(ActWork)
+	#up.up(ActWork)
 
 	return 0
 
 def cont_work(db_file):
-	'''
-	cont_work() függvény
-	Ezzel az utolsó lezárt munkát lehet tovább folytatni.
-
-	A függvény kitörli az AB-ből a legnagyobb ID-jű munka időre vonatkozó celláit. 
-	'''
-	# adatbázis
-	conn = sqlite3.connect(db_file)
-	
-	# Az utolsó ID (azaz utolsó sor) lekérdezése (a következőkben ezt töltjük fel)
-	LastRowID = conn.execute("SELECT MAX(ID) FROM WorkTime").fetchone()[0]
-	# Ha még nem volt elindítva munka, akkor vissza a főmenübe
-	if(LastRowID == None):
-		print('Még nincs megkezdett munka az adatbázisban!')
-		print('\nPress any key to continue...',end='')
-		msvcrt.getch()
-		conn.close()
-		return -1
-	
-	# Itt betöltjük az legnagyobb ID-jű recordot és megjelenítjük
-	cont_Work = Work()
-	cont_Work.LastRowID = LastRowID
-	cont_Work.db_conn = conn
-	load_from_db(cont_Work)
-	
-	while(True):
-		key = summary(cont_Work, ' Utolsó munka folytatása ')
-	
-		if(key == 13):      # ENTER - továbblépés
-			break
-		elif(key == 8):     # BACKSPACE - visszalépés
-			conn.close()
-			return 8
-		elif(key == 27):    # ESC - kilépés
-			conn.close()
-			return 27
-
-	conn.execute("UPDATE WorkTime SET StopTime=?, MinusTime=?, WorkTimeStop=?, WorkTimeInSec=?, WorkTimeHour=? WHERE ID=?", 
-		[None, None, None, None, None, LastRowID])
-	conn.commit()
-	conn.close()
