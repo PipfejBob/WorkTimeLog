@@ -30,20 +30,22 @@ def edit_work(Edit_Work):
 		# Munkaleírás kiválasztása (WorkDescription)
 		elif(menu_num == 2): key = stop_work.get_work(Edit_Work)
 		# Új munka összegzése (Summary)
-		elif(menu_num == 3): 
-			pass
-			#key = summary(Edit_Work)
+		elif(menu_num == 3): key = edit_minustime(Edit_Work)
 
 		if(menu_num == 4): break
+		# ESC
 		elif(key == 27): menu_num = -1
+		# Backspace
 		elif(key == 8): menu_num -= 1
+		# Enter vagy egyéb
 		else: menu_num += 1
-		
+
+	stop_work.time_calc(Edit_Work, time_opt=False)	
 	stop_work.comit_to_db(Edit_Work)
 	#conn.close()
 	pass
 
-def list_works(db_file, time_recalc=0, beg=None, end=None):
+def list_works(db_file, time_recalc=0, time_opt=True, beg=None, end=None):
 	# TODO: ki kell választani azokat a munkákat, amik a két dátum között vannak és egyenkét be kell tenni ezeket
 	conn = sqlite3.connect(db_file)
 
@@ -56,10 +58,10 @@ def list_works(db_file, time_recalc=0, beg=None, end=None):
 			print('Adja meg a listázandó évet és hónapot (formátum: yyyy-mm):')
 			tmp = input()
 			try:
-                		date = tmp.split('-')
-                		r = calendar.monthrange(int(date[0]), int(date[1]))
-                		beg = date[0] + '-' + date[1] + '-01 00:00:00'
-                		end = date[0] + '-' + date[1] + '-' + str(r[1]) + ' 23:59:59'    
+				date = tmp.split('-')
+				r = calendar.monthrange(int(date[0]), int(date[1]))
+				beg = date[0] + '-' + date[1] + '-01 00:00:00'
+				end = date[0] + '-' + date[1] + '-' + str(r[1]) + ' 23:59:59'    
 				break
 			except Exception as e:
 				print(e)
@@ -86,9 +88,9 @@ def list_works(db_file, time_recalc=0, beg=None, end=None):
 
 		# Work objektum feltöltése az adatbázisból
 		stop_work.load_from_db(Work)
-		# itt újra számolódnak az idők (Start és Stop time-ból)
+		# itt újra számolódnak az idők (Start és Stop time-ból) és beíródnak az adatbázisba
 		if(time_recalc != 0 and Work.Time_Start != None and Work.Time_Stop != None):
-			stop_work.time_calc(Work)
+			stop_work.time_calc(Work, time_opt)
 			stop_work.comit_to_db(Work)
 		Work_list.append(Work)
 	return Work_list
@@ -111,6 +113,21 @@ def show_list_works(Work_list):
 			pass
 	# itt bezárjuk a db connectiont
 	Work_list[0].db_conn.close()
+
+def edit_minustime(Edit_Work):
+	os.system('cls' if os.name == 'nt' else 'clear')
+	title = ' Ebédidő '
+	print('{:#^80s}'.format(title))
+	print('Régi ebédidő: ', Edit_Work.Time_Minus)
+	while(True):
+		new_mt = input('Új ebédidő: ')
+		try:
+			new_mt = new_mt.split(':')
+			Edit_Work.Time_Minus = timedelta(hours=int(new_mt[0]), minutes=int(new_mt[1]), seconds=int(new_mt[2]))
+			break
+		except Exception as e:
+			print(e)
+	return 0
 
 def work_stat(Work_list):
 	# összes havi munkaidő
