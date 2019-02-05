@@ -162,7 +162,7 @@ def main():
 				pass
 			elif(main_menu.cursor == 4):
 				# Statisztika: ...
-				w_list = edit_work.list_works(db_file, time_recalc=1)
+				w_list = edit_work.list_works(db_file, time_recalc=1, time_opt=False)
 				stati.stati(w_list, specdays_fd, specdays_ew, specdays_ph)
 				#edit_work.work_stat(w_list)
 				pass
