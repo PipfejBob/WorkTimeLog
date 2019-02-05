@@ -89,6 +89,7 @@ def list_works(db_file, time_recalc=0, beg=None, end=None):
 		# itt újra számolódnak az idők (Start és Stop time-ból)
 		if(time_recalc != 0 and Work.Time_Start != None and Work.Time_Stop != None):
 			stop_work.time_calc(Work)
+			stop_work.comit_to_db(Work)
 		Work_list.append(Work)
 	return Work_list
 
