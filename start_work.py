@@ -1,5 +1,6 @@
 from uptime import boottime
 from datetime import datetime
+from datetime import timedelta
 import sqlite3, msvcrt, os
 
 def start_work(db_file):
@@ -40,6 +41,7 @@ def start_work(db_file):
         else:
             Time_Start = Time_Boot
     print('StartTime:    ' + str(Time_Start))
+    print('    +8:45:    ' + str(Time_Start + timedelta(hours=8, minutes=45)))
     print('#'*80)
     print('Elvet [ESC], Jóváhagy [ENTER]')
 
