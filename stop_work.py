@@ -220,14 +220,15 @@ def time_calc(ActWork, time_opt=True):
 	# munkaidő optimalizáció
 	if time_opt == True or ActWork.Time_Minus == None:
 		wt = ActWork.Time_Stop - ActWork.Time_Start
-		if(wt <= timedelta(hours=3, minutes=0)):
+		if(wt <= timedelta(hours=4, minutes=0)):
 			ActWork.Time_Minus = timedelta(minutes=0)
-		elif(wt > timedelta(hours=3, minutes=0) and wt <= timedelta(hours=8, minutes=35)):
-			ActWork.Time_Minus = timedelta(minutes=35)
-		elif(wt > timedelta(hours=8, minutes=35) and wt <= timedelta(hours=9, minutes=0)): 
-			ActWork.Time_Minus = wt - timedelta(hours=8)
+		elif(wt > timedelta(hours=4, minutes=0) and wt <= timedelta(hours=8, minutes=45)):
+			ActWork.Time_Minus = timedelta(minutes=45)
+		elif(wt > timedelta(hours=8, minutes=45) and wt <= timedelta(hours=9, minutes=0)): 
+			#ActWork.Time_Minus = wt - timedelta(hours=8)
+			timedelta(minutes=45)
 		else:
-			ActWork.Time_Minus = timedelta(hours=1)
+			ActWork.Time_Minus = timedelta(minutes=45)
 	else:
 		pass
 	
