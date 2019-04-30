@@ -226,7 +226,7 @@ def time_calc(ActWork, time_opt=True):
 			ActWork.Time_Minus = timedelta(minutes=45)
 		elif(wt > timedelta(hours=8, minutes=45) and wt <= timedelta(hours=9, minutes=0)): 
 			#ActWork.Time_Minus = wt - timedelta(hours=8)
-			timedelta(minutes=45)
+			ActWork.Time_Minus = timedelta(minutes=45)
 		else:
 			ActWork.Time_Minus = timedelta(minutes=45)
 	else:
