@@ -62,12 +62,12 @@ def stati(Work_list, specdays_fd, specdays_ew, specdays_ph):
 		w_time_bynow_str = timedelta_to_str(w_time_bynow)
 		
 		# ha az eddig ledolgozott órák száma nagyobb, mint a szükséges
-		if w_time_bynow <= w_time:
-			deltat = w_time - w_time_bynow
+		if w_time_bynow <= (w_time + timedelta(hours = cnt_paidholidays * 8)):
+			deltat = (w_time + timedelta(hours = cnt_paidholidays * 8)) - w_time_bynow
 			deltat_str = timedelta_to_str(deltat)
 		# ha kevesebbet dolgoztunk, mint kellett volna
 		else:
-			deltat = w_time_bynow - w_time
+			deltat = w_time_bynow - (w_time + timedelta(hours = cnt_paidholidays * 8))
 			deltat_str = '-' + timedelta_to_str(deltat)
 
 		print('Eddigi munkaórák száma:        ' + w_time_bynow_str)
@@ -81,12 +81,12 @@ def stati(Work_list, specdays_fd, specdays_ew, specdays_ph):
 		w_time_bynow_str = timedelta_to_str(w_time_bynow)
 		
 		# ha az eddig ledolgozott órák száma nagyobb, mint a szükséges
-		if w_time_bynow <= w_time:
-			deltat = w_time - w_time_bynow
+		if w_time_bynow <= (w_time + timedelta(hours = cnt_paidholidays * 8)):
+			deltat = (w_time + timedelta(hours = cnt_paidholidays * 8)) - w_time_bynow
 			deltat_str = timedelta_to_str(deltat)
 		# ha kevesebbet dolgoztunk, mint kellett volna
 		else:
-			deltat = w_time_bynow - w_time
+			deltat = w_time_bynow - (w_time + timedelta(hours = cnt_paidholidays * 8))
 			deltat_str = '-' + timedelta_to_str(deltat)
 		print('Ledolgozott órák száma:        ' + w_time_str)
 		print('Munkaidő különbözet:           ' + deltat_str)
