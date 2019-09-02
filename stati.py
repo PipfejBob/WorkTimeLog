@@ -54,6 +54,7 @@ def stati(Work_list, specdays_fd, specdays_ew, specdays_ph):
 	print('Munkanapok száma:              ' + str(len(workdays)), ' (' + str(len(workdays)*8) + ' óra)')
 	print('Szabadnapok száma:             ' + str(len(offday)))
 	print('Felhasznált szabadságok száma: ' + str(cnt_paidholidays))
+	print('Csúsztatós napok száma:        ' + str(len(workdays) - cnt_paidholidays - len(offday)))
 	
 	# ha az adott hónapban járunk
 	if most.year == w_year and most.month == w_month and most.day > 1:
